@@ -844,3 +844,13 @@ let listaV = [
      "Fecha": "2023-05-01"
     }
    ]
+
+const listaVotantes = ()=>{
+    return listaV;
+}
+
+
+export default{
+    listaVotantes,
+}
+

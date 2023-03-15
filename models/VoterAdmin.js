@@ -2,9 +2,11 @@ const { Schema, model } = require('mongoose');
 
 
 const voterAdminSchema = new Schema({
-    documento: Number,
-    estate: String,
-    date: String,
+    identificacion: Number,
+    Estamento: String,
+    dateVoter: String,
+    phone: String,
+    email: String,
     votoAsamGeneral: String,
 });
 

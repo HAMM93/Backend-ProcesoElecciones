@@ -2,9 +2,11 @@ const { Schema, model } = require('mongoose');
 
 
 const voterEgreseSchema = new Schema({
-    documento: Number,
-    estate: String,
-    date: String,
+    identificacion: Number,
+    Estamento: String,
+    dateVoter: String,
+    phone: String,
+    email: String,
     votoAsamGeneral: String,
     votoConsSuperor: String,
     votoConsAcademico: String,
@@ -20,6 +22,6 @@ voterEgreseSchema.set('toJSON',{
     }
 })
 
-const VoterEgrese = model('VoterAdmin', voterEgreseSchema);
+const VoterEgrese = model('VoterEgrese', voterEgreseSchema);
 
 module.exports = VoterEgrese;
