@@ -10,18 +10,13 @@ const VoterTeach = require('./models/VoterTeach');
 const VoterAdmin = require('./models/VoterAdmin');
 const LikelyVoter = require('./models/LikelyVoter');
 
-const {
-  default: mongoose
-} = require('mongoose');
 
 
 app.use(cors());
 app.use(express.json());
 
 
-let votantesAdmin = [];
-let votantesTeach = [];
-let votantesEgrese = [];
+
 /**
  * retorta la lista de los posibles votantes
  */
@@ -34,9 +29,7 @@ app.get('/api/posiblesVotantes', (req, res) => {
 
 // total de votos registrados
 app.get('/api/totalVotantes', (req, res) => {
-  const totalVotantes = votantesAdmin.concat(votantesTeach, votantesEgrese);
-  res.json(totalVotantes);
-  // VoterAdmin.find()
+     // VoterAdmin.find()
   //   .then((datos) => {
   //     res.json(datos);
   //   })
@@ -44,15 +37,7 @@ app.get('/api/totalVotantes', (req, res) => {
 
 
 app.get('/api/estadisticasVotaciones', (req, res) => {
-  const totalVotantes = votantesAdmin.concat(votantesTeach, votantesEgrese);
   let estadisticas = {}
-
-  estadisticas.TotalVotantes = totalVotantes.length;
-  estadisticas.TotalvotantesAdministrativos = votantesAdmin.length;
-  estadisticas.TotalvotantesDocentes = votantesTeach.length;
-  estadisticas.TotalvotantesEgrese = votantesEgrese.length;
-
-
   res.json(estadisticas);
   // VoterAdmin.find()
   //   .then((datos) => {
@@ -62,26 +47,107 @@ app.get('/api/estadisticasVotaciones', (req, res) => {
 
 
 
-
-
 /**
- * retorna la lista de los votantes que ya ejercieron su derecho
+ * retorna las estadisticas para cada uno de los estamentos
  */
 app.get('/api/votantesRegistradosteach', (req, res) => {
-  res.json(votantesTeach);
+  VoterTeach.find({})
+    .then((list) => {
+      const agPlancha2 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 2');
+      const csPlancha3 = list.filter(voter => voter.votoConsSuperor === 'plancha No 3');
+      const agVotoBlanco = list.filter(voter => voter.votoAsamGeneral === 'Voto En Blanco');
+      const csVotoBlanco = list.filter(voter => voter.votoConsSuperor === 'Voto En Blanco');
+
+      res.json({
+        conteoTotalDocentes: list.length,
+        AsamGenerlPlancha2: agPlancha2.length,
+        AsamGenerlVotoBlanco: agVotoBlanco.length,
+        ConsejoSuperiorPlancha3: csPlancha3.length,
+        ConsejoSuperiorVotoBlanco: csVotoBlanco.length
+      });
+    })
+    .catch(() => {
+      console.log(err)
+    })
 });
 app.get('/api/votantesRegistradosEgrese', (req, res) => {
-  res.json(votantesEgrese);
+  VoterEgrese.find({})
+    .then((list) => {
+      const agPlancha3 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 3');
+      const agPlancha4 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 4');
+      const agPlancha5 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 5');
+      const agVotoBlanco = list.filter(voter => voter.votoAsamGeneral === 'Voto En Blanco');
+
+
+      const csPlancha1 = list.filter(voter => voter.votoConsSuperor === 'plancha No 1');
+      const csPlancha3 = list.filter(voter => voter.votoConsSuperor === 'plancha No 3');
+      const csVotoBlanco = list.filter(voter => voter.votoConsSuperor === 'Voto En Blanco');
+
+      const caPlancha3 = list.filter(voter => voter.votoConsAcademico === 'plancha No 3');
+      const caVotoBlanco = list.filter(voter => voter.votoConsAcademico === 'Voto En Blanco');
+
+
+      const baPlancha3 = list.filter(voter => voter.votoBienestar === 'plancha No 3');
+      const baVotoBlanco = list.filter(voter => voter.votoBienestar === 'Voto En Blanco');
+      res.json({
+        conteoTotalEgresados: list.length,
+        AsamGenerlPlancha3: agPlancha3.length,
+        AsamGenerlPlancha4: agPlancha4.length,
+        AsamGenerlPlancha5: agPlancha5.length,
+        AsamGenerlVotoBlanco: agVotoBlanco.length,
+
+        ConsejoSuperiorPlancha1: csPlancha1.length,
+        ConsejoSuperiorPlancha3: csPlancha3.length,
+        ConsejoSuperiorcsVotoBlanco: csVotoBlanco.length,
+
+        ConsejoAcademicoPlancha3: caPlancha3.length,
+        ConsejoAcademicoVotoBlanco: caVotoBlanco.length,
+
+        BienestarUniverPlancha3: baPlancha3.length,
+        BienestarUniverVotoBlanco: baVotoBlanco.length,
+      });
+    })
+    .catch(() => {
+      console.log(err)
+    })
 });
+
+app.get('/api/votantesRegistradosEgreseDerecho', (req, res) => {
+  VoterEgrese.find({})
+    .then((list) => {
+
+      const fdPlancha3 = list.filter(voter => voter.votoConsFacuDerecho === 'plancha No 3');
+      const fdVotoBlanco = list.filter(voter => voter.votoConsFacuDerecho === 'Voto En Blanco');
+
+      res.json({
+        conteoTotalEgresadosDerecho: fdPlancha3.length + fdVotoBlanco.length,
+
+        ConsejoFacuDerechoPlancha3: fdPlancha3.length,
+        ConsejoFacuDerechoVotoBlanco: fdVotoBlanco.length
+      });
+    })
+    .catch(() => {
+      console.log(err)
+    })
+});
+
 app.get('/api/votantesRegistradosAdmin', (req, res) => {
-  res.json(votantesAdmin);
-  // VoterAdmin.find()
-  //   .then((datos) => {
-  //     res.json(datos);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err)
-  //   })
+  VoterAdmin.find({})
+    .then((list) => {
+      const agPlancha1 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 1');
+      const agPlancha2 = list.filter(voter => voter.votoAsamGeneral === 'plancha No 2');
+      const agVotoBlanco = list.filter(voter => voter.votoAsamGeneral === 'Voto En Blanco');
+
+      res.json({
+        conteoTotalAdministrativos: list.length,
+        AsamGenerlPlancha1: agPlancha1.length,
+        AsamGenerlPlancha2: agPlancha2.length,
+        AsamGenerlVotoBlanco: agVotoBlanco.length
+      });
+    })
+    .catch(() => {
+      console.log(err)
+    })
 })
 
 /**
@@ -107,12 +173,14 @@ app.get('/api/posiblesVotantes/:id', (req, res) => {
     })
 })
 
-app.get('/api/actualizarVotantes/:id',(req,res)=>{
+app.get('/api/actualizarVotantes/:id', (req, res) => {
   const document = Number(req.params.id);
   console.log(document);
   LikelyVoter.updateOne({
       identificacion: document
-    },{Estamento:'Ejercido'})
+    }, {
+      Estamento: 'Ejercido'
+    })
     .then((voter) => {
       if (voter) {
         return res.json(voter);
