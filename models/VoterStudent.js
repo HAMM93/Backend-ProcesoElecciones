@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 
-const voterTeachSchema = new Schema({
+
+const voterStudentSchema = new Schema({
     identificacion: Number,
     Estamento: String,
     dateVoter: String,
@@ -8,10 +9,9 @@ const voterTeachSchema = new Schema({
     phone: String,
     email: String,
     votoAsamGeneral: String,
-    votoConsSuperor: String,
 });
 
-voterTeachSchema.set('toJSON',{
+voterStudentSchema.set('toJSON',{
     transform: (documento, returnedObject)=>{
         returnedObject.id = returnedObject._id;
         delete returnedObject._id;
@@ -19,6 +19,6 @@ voterTeachSchema.set('toJSON',{
     }
 })
 
-const VoterTeach = model('VoterTeach', voterTeachSchema);
+const VoterStudent = model('voterStudent', voterStudentSchema);
 
-module.exports = VoterTeach;
+module.exports = VoterStudent;

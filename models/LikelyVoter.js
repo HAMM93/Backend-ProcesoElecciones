@@ -8,6 +8,7 @@ const likelyVoterSchema = new Schema({
     Fecha: String,
     codigo: String,
     Facultad: String,
+    Correo: String,
 });
 
 likelyVoterSchema.set('toJSON',{
